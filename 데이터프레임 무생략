@@ -1,0 +1,5 @@
+# row 생략 없이 출력
+pd.set_option('display.max_rows', None)
+
+# col 생략 없이 출력
+pd.set_option('display.max_columns', None)
