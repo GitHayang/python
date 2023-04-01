@@ -11,3 +11,6 @@ chromeOption = Options()
 chromeOption.add_argument("Window-size=1920x1080")
 
 driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()),options=chromeOption)
+
+ # 페이지 뒤로 돌아가기
+ driver.back()
