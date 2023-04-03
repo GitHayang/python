@@ -1,0 +1,25 @@
+import datetime
+
+day1 = datetime.date(2017,1,31)
+day1
+
+day2 = datetime.date(2022,12,11)
+day2
+
+result = day2-day1
+result.days
+
+date = datetime.date(2020,2,11)
+date=str(date).split("-")
+
+year=int(date[0])
+month=int(date[1])
+day=int(date[2])
+print(year)
+print(month)
+print(day)
+
+# 특정월의 마지막 일 구하는 방법 / 윤년도 나옴
+import calendar
+
+calendar.monthrange(year,month)[1]
