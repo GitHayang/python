@@ -12,9 +12,6 @@ inDbName = "kopo"
 engine = create_engine('mysql+pymysql://{}:{}@{}:{}/{}'.format(inId,inPw,inIp,inPort,inDbName))
 # mysql+pymysql... DB에 따라 변경
 
-readData = pd.read_sql_query('show tables;', engine) # DB에 따라 바뀌는 부분
-readData 
-
 inData = pd.read_csv("../dataset/customerdata.csv") # 가져올 데이터에 따라 다르다
 inData.head()
 
