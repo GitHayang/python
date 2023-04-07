@@ -1,0 +1,31 @@
+import pandas as pd
+import pymysql
+from sqlalchemy import create_engine
+
+# 변경사항
+inId = "kopo"
+inPw = "kopo"
+inIp = "192.168.110.111"
+inPort = "3306"
+inDbName = "kopo"
+
+engine = create_engine('mysql+pymysql://{}:{}@{}:{}/{}'.format(inId,inPw,inIp,inPort,inDbName))
+# mysql+pymysql... DB에 따라 변경
+
+readData = pd.read_sql_query('show tables;', engine) # DB에 따라 바뀌는 부분
+readData 
+
+inData = pd.read_csv("../dataset/customerdata.csv") # 가져올 데이터에 따라 다르다
+inData.head()
+
+lastData = pd.DataFrame(inData)
+lastData
+
+resultname='customer_백승수' #파일따라 수정(저장되는 파일명)
+lastData.to_sql(resultname, engine, if_exists='replace', index=False)
+
+read = pd.read_sql_query('SELECT * FROM TABS', engine) # DB에 따라 바뀌는 부분
+read.head()
+
+read = pd.read_sql_query('SELECT * FROM customer_백승수', engine) # FROM절 이후 내가 저장한 파일명에 따라 변경
+read.head()
