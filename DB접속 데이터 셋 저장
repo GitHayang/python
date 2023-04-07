@@ -10,7 +10,10 @@ inPort = "3306"
 inDbName = "kopo"
 
 engine = create_engine('mysql+pymysql://{}:{}@{}:{}/{}'.format(inId,inPw,inIp,inPort,inDbName))
-# mysql+pymysql... DB에 따라 변경
+# ... DB에 따라 변경
+# mariaDB = mysql+pymysql
+# postgres = postgresql
+# oralce = oracle+cx_oracle
 
 inData = pd.read_csv("../dataset/customerdata.csv") # 가져올 데이터에 따라 다르다
 inData.head()
