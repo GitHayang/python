@@ -17,6 +17,7 @@ inDbName = "XE"
 postEngine = create_engine("oracle+cx_oracle://{}:{}@{}:{}/{}".format(inId,inPw,inIp,inPort,inDbName))
 
 # resultName부분이 테이블명이 된다.
+# 만들때마다 이름을 달리해야한다. 이름이 같으면 에러난다.
 resultName = "SORTED_백승수"
 
 # 데이터 저장 
