@@ -1,0 +1,25 @@
+import cx_Oracle
+from sqlalchemy import create_engine
+from sqlalchemy import types
+
+# import한 types를 이용한다.
+# 기본적으로 스트링 타입을 CLOB으로 변환해서 넣기에 시간이 오래걸린다
+# 이를 해결하기위해서 미리 VARCHAR로 만들어서 넣어줌으로써 시간을 단축한다
+to_varchar = {c:types.VARCHAR(sortedData[c].str.len().max())\
+        for c in sortedData.columns[sortedData.dtypes=='object'].tolist()}
+
+# DB접속에 필요한 부분을 변수로 지정해서 format으로 넣어준다.
+inId = "SYSTEM"
+inPw = "oracle"
+inIp = "127.0.0.1"
+inPort = "1521"
+inDbName = "XE"
+postEngine = create_engine("oracle+cx_oracle://{}:{}@{}:{}/{}".format(inId,inPw,inIp,inPort,inDbName))
+
+# resultName부분이 테이블명이 된다.
+# 만들때마다 이름을 달리해야한다. 이름이 같으면 에러난다.
+resultName = "SORTED_백승수"
+
+# 데이터 저장 
+%timeit -n 1 -r 1 sortedData.to_sql(name=resultName, con=postEngine, if_exists='replace', index=False, dtype=to_varchar)
+# %timeit -n 1 -r 1소요된 시간을 표시하기 위해 넣은 부분으로 없어도 무관하다.
