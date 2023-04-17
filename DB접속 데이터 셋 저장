@@ -21,8 +21,22 @@ inData.head()
 lastData = pd.DataFrame(inData)
 lastData
 
-resultname='customer_백승수' #파일따라 수정(저장되는 파일명)
-lastData.to_sql(resultname, engine, if_exists='replace', index=False)
+tableName = "JIKGB_TEST"
+# 변경하면서 사용
+tableName = tableName.lower()
+# 변경하면서 사용
+#### 문자컬럼에 대해서 varchar (100) 적용 _ 사용시 속도 SpeedUp 50배 
+objectColumns = list(testData.columns[testData.dtypes == 'object'])
+typeDict={}
+maxLen = 100
+
+for i in range(0, len(objectColumns)):
+    # sawonData[i].str.len().max() 최대치 사용할 경우
+    typeDict[ objectColumns[i] ] = types.VARCHAR(100)
+#### 문자컬럼에 대해서 varchar (100) 적용 _ 사용시 속도 SpeedUp 50배 
+
+testData.to_sql(name=tableName, if_exists="replace", con=engine,dtype=typeDict, index=False)
+# 변경하면서 사용
 
 read = pd.read_sql_query('SELECT * FROM TABS', engine) # DB에 따라 바뀌는 부분
 read.head()
