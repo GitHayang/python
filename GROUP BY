@@ -1,0 +1,5 @@
+groupKey = ['bankid','age']
+
+groupData=conDB.groupby(groupKey)[["income"]].agg(["mean", "max"])
+groupData.reset_index=True
+groupData
