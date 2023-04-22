@@ -1,0 +1,75 @@
+# 테이블 불러오기
+# 최우선적으로 정보가 저장되어 있는 DB 테이블을 불러온다
+import pymysql
+from sqlalchemy import create_engine
+from sqlalchemy import types
+import pandas as pd
+
+inId = "kopo"
+inPw = "kopo"
+inIp = "192.168.110.112"
+inPort = "1521"
+inDbName = "orcl"
+
+postEngine = create_engine("oracle+cx_oracle://{}:{}@{}:{}/{}".format(inId,inPw,inIp,inPort,inDbName))
+
+viewDB = pd.read_sql_query(sql="select * from KOPO_PARMA_백승수", con=postEngine)
+viewDB.head()
+
+
+# 불러올 DB의 정보와 저장할 DB의 정보를 각 변수에 지정한다
+src = viewDB.loc[viewDB.param_name == 'SRC_TABLE','parma_value'].values[0]
+con = viewDB.loc[viewDB.param_name == 'SRC_CON','parma_value'].values[0]
+srcDest = viewDB.loc[viewDB.param_name == 'DEST_TABLE','parma_value'].values[0]
+destCon = viewDB.loc[viewDB.param_name == 'DEST_CON','parma_value'].values[0]
+
+
+# 접속해야할 마리아DB
+inId = "kopo"
+inPw = "kopo"
+inIp = "192.168.110.111"
+inPort = "3306"
+inDbName = "kopo"
+# 해당 정보가 con이라는 변수에 담긴 상태다
+
+postEngine = create_engine(con)
+# 원래는 create_engine('mysql+pymysql://{}:{}@{}:{}/{}'.format(inId,inPw,inIp,inPort,inDbName))선언해서 사용
+# ... DB에 따라 변경
+# mariaDB = mysql+pymysql
+# postgres = postgresql
+# oralce = oracle+cx_oracle
+
+
+
+
+# 해당 부분으로 해당 DB에 담긴 테이블들을 조회할 수 있다.
+postEngine.table_names() 
+
+
+# 마리아DB는 대소문자를 구분한다.
+# 최초에 DB에서 불러온 테이블명은 대문자로 되어있었지만, 마리아 DB에 담긴 테이블은 소문자기에 .lower를 통해 소문자로 캐스팅했다.
+conDB = pd.read_sql_query(sql="select * from {}".format(src.lower()), con=postEngine)
+
+# 오라클 DB
+inId = "kopo"
+inPw = "kopo"
+inIp = "192.168.110.112"
+inPort = "1521"
+inDbName = "orcl"
+# 해당 정보가 destCon이라는 변수에 담긴 상태다
+
+# Oracle은 테이블명이 대문자이기에 소문자가 섞여도 상관없이 사용하기 위해 .upper해주었다.
+postEngine = create_engine(destCon)
+resultName = "원하는 테이블명"
+resultName = resultName.upper()
+objectColumns = list(conDB.columns[conDB.dtypes == 'object'])
+typeDict={}
+maxLen = 100
+
+# DB에 저장할 때 시간 단축을 위해 성능향상을 해주는 부분이다
+# 파이썬을 통해 DB에 저장될때는 CLOB이라는 형식으로 저장되는데 이는 용량이 커서 시간이 오래걸리기에 VARCHAR로 변환해서 넣어줌으로써 시간을 단축한다.
+for i in range(0, len(objectColumns)):
+    typeDict[ objectColumns[i] ] = types.VARCHAR(100)
+
+conDB.to_sql(name=resultName, if_exists="replace", con=postEngine, dtype=typeDict, index=False)
+
