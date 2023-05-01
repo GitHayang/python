@@ -3,3 +3,6 @@ groupKey = ['bankid','age']
 groupData=conDB.groupby(groupKey)[["income"]].agg(["mean", "max"])
 groupData.reset_index=True
 groupData
+
+그룹 키로 묶은 대상을 기준으로 숫자로 된 값들을 평균, 편차, 최소, 최대 등등의 값을 구해준다
+상단의 코드를 보자면 아이디, 나이에 따른 수입의 평균과 최대치를 볼 수 있다.
