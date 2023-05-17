@@ -5,11 +5,11 @@ from sqlalchemy import create_engine
 from sqlalchemy import types
 import pandas as pd
 
-inId = "kopo"
-inPw = "kopo"
-inIp = "192.168.110.112"
-inPort = "1521"
-inDbName = "orcl"
+inId = "DBid"
+inPw = "DBpassword"
+inIp = "IP"
+inPort = "PORT"
+inDbName = "DB종류"
 
 postEngine = create_engine("oracle+cx_oracle://{}:{}@{}:{}/{}".format(inId,inPw,inIp,inPort,inDbName))
 
@@ -25,11 +25,11 @@ destCon = viewDB.loc[viewDB.param_name == 'DEST_CON','parma_value'].values[0]
 
 
 # 접속해야할 마리아DB
-inId = "kopo"
-inPw = "kopo"
-inIp = "192.168.110.111"
-inPort = "3306"
-inDbName = "kopo"
+inId = "DBid"
+inPw = "DBpassword"
+inIp = "IP"
+inPort = "PORT"
+inDbName = "DB종류"
 # 해당 정보가 con이라는 변수에 담긴 상태다
 
 postEngine = create_engine(con)
@@ -51,11 +51,11 @@ postEngine.table_names()
 conDB = pd.read_sql_query(sql="select * from {}".format(src.lower()), con=postEngine)
 
 # 오라클 DB
-inId = "kopo"
-inPw = "kopo"
-inIp = "192.168.110.112"
-inPort = "1521"
-inDbName = "orcl"
+inId = "DBid"
+inPw = "DBpassword"
+inIp = "IP"
+inPort = "PORT"
+inDbName = "DB종류"
 # 해당 정보가 destCon이라는 변수에 담긴 상태다
 
 # Oracle은 테이블명이 대문자이기에 소문자가 섞여도 상관없이 사용하기 위해 .upper해주었다.
