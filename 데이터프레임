@@ -10,3 +10,6 @@ result.style.set_properties(**{'text-align': 'left'})
 # rolling을 이용하면 이동평균을 구해준다
 # min_periods : 계산할 값의 최소 개수
 # center=True : 현재 값을 중심으로 연산할지
+
+# 상관관계를 분석
+.corr()
