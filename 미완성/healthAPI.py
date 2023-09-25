@@ -1,28 +1,43 @@
-### 백엔드 서버 구성 라이브러리
 from flask_cors import CORS
 from flask import Flask, request, json, jsonify
-### 데이터 처리 및 로드 라이브러리
 import sys
 import pandas as pd
 import numpy as np
 import pickle
-
-### 머신러닝 라이브러리
 from sklearn.tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.rcParams["font.family"] = "Malgun Gothic"
+matplotlib.rcParams["font.size"] = 15
+matplotlib.rcParams["axes.unicode_minus"] = False
 
 app = Flask(__name__)
 picklemodel = './hyulApDang.pickle'
-
+app.config['JSON_AS_ASCII'] = False
 # 모델 실행
 with open(picklemodel, 'rb') as f:
     loaded_model = pickle.load(f)
 
 CORS(app)
 
-@app.route("/", methods=['POST'])
+def generate_chart(status_counts, resultData):
+    # 데이터 처리 및 그래프 생성
+    status_percentages = (status_counts / len(resultData)) * 100
+    explode = [0.05]*4
+    plt.pie(status_percentages, labels=status_counts.index, autopct='%1.1f%%', explode=explode)
+    plt.title('건강 상태')
 
+    # 이미지를 저장할 경로 설정 (Flask 애플리케이션 경로 내에 있어야 함)
+    image_path = 'C:/kopo/sts-4.19.1.RELEASE/workspace/tester/src/main/resources/static/generated_image.png'  # 경로 및 파일명은 상황에 맞게 수정
+
+    # 이미지를 파일로 저장
+    plt.savefig(image_path, format='png', encoding='utf-8')
+
+    # 저장한 이미지 경로 반환
+    return image_path
+
+@app.route("/", methods=['POST'])
 def uploaded_file():
-    
     uploaded_file = request.files['file']
     
     if uploaded_file != '':
@@ -32,6 +47,7 @@ def uploaded_file():
             # 1개의 파일안에 혈당, 혈압이 다 있을 수도 있고, 2중 1개만 있을 수도 있다.
         except:
             print("파일 못 받는중")
+    
     # 혈당은 공복혈당을 기준으로 재지만, 공복혈당이 없거나,
     # 언제 쟀는지 표기가 없다면 그냥 혈당 전체를 사용한다.
     try:
@@ -75,7 +91,9 @@ def uploaded_file():
     total = (status_counts[0]+status_counts[1]+status_counts[2]+status_counts[3])
     diabetes = (status_counts[1]+status_counts[2])/total
     hypertension = (status_counts[1]+status_counts[3])/total                           
- 
+
+    # 이미지 생성
+    image_path = generate_chart(status_counts, resultData)
 
     result = {}
 
@@ -94,9 +112,9 @@ def uploaded_file():
     else : 
         result["status"] = "건강합니다."
         
+    result["image_path"] = image_path
+
     return json.dumps(result, ensure_ascii=False)
 
-    
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=34463)
-
