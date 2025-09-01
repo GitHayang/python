@@ -1,0 +1,55 @@
+리소스 측정 
+
+# 시작부분
+import time
+import psutil
+import os
+import threading
+
+cpu_usages = []
+mem_usages = []
+cpu_freqs = []
+running = True
+
+def monitor(interval=0.2):
+    """실행 중 CPU, 메모리, 클럭 속도 기록"""
+    global cpu_usages, mem_usages, cpu_freqs, running
+    process = psutil.Process(os.getpid())
+    while running:
+        cpu_usages.append(psutil.cpu_percent(interval=None))
+        mem_usages.append(process.memory_info().rss / 1024 ** 2)  # MB
+        cpu_freq = psutil.cpu_freq().current  # MHz
+        cpu_freqs.append(cpu_freq)
+        time.sleep(interval)
+
+# 모니터링 스레드 시작
+monitor_thread = threading.Thread(target=monitor)
+monitor_thread.start()
+
+# 🟨 실행할 실제 코드 블럭
+start_time = time.time()
+
+# 종료 부분
+
+# 🟨 실행할 코드 블럭 끝
+end_time = time.time()
+# -----------------------
+
+# 모니터링 종료
+running = False
+monitor_thread.join()
+
+# 결과 요약
+print(f"총 실행 시간: {end_time - start_time:.2f}초")
+
+print(f"\n CPU 사용률 (%)")
+print(f"  - 평균: {sum(cpu_usages)/len(cpu_usages):.2f}%")
+print(f"  - 최대: {max(cpu_usages):.2f}%, 최소: {min(cpu_usages):.2f}%")
+
+print(f"\n CPU 클럭 속도 (MHz)")
+print(f"  - 평균: {sum(cpu_freqs)/len(cpu_freqs):.2f} MHz")
+print(f"  - 최대: {max(cpu_freqs):.2f}, 최소: {min(cpu_freqs):.2f}")
+
+print(f"\n 메모리 사용량 (MB)")
+print(f"  - 평균: {sum(mem_usages)/len(mem_usages):.2f}MB")
+print(f"  - 최대: {max(mem_usages):.2f}MB")
